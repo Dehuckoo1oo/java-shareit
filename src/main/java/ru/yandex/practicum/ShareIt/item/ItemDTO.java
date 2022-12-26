@@ -1,17 +1,18 @@
-package ru.yandex.practicum.ShareIt.Item;
+package ru.yandex.practicum.ShareIt.item;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-public class Item {
-
+public class ItemDTO {
     interface New {
 
     }
@@ -25,11 +26,10 @@ public class Item {
     }
 
     private Long id;
-    @NotBlank(groups = {Item.New.class})
+    @NotBlank(groups = {ItemDTO.New.class})
     private String name;
-    @NotBlank(groups = {Item.New.class})
+    @NotBlank(groups = {ItemDTO.New.class})
     private String description;
-    private Long owner;
-    @NotNull(groups = {Item.New.class})
+    @NotNull(groups = {ItemDTO.New.class})
     private Boolean available;
 }

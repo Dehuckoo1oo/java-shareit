@@ -1,4 +1,4 @@
-package ru.yandex.practicum.ShareIt.User;
+package ru.yandex.practicum.ShareIt.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -17,28 +17,28 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public User remove(@PathVariable Long userId){
+    public UserDTO remove(@PathVariable Long userId) {
         return userService.remove(userId);
     }
 
     @PostMapping
-    public User create(@Validated(User.New.class) @RequestBody User user){
-        return userService.create(user);
+    public UserDTO create(@Validated(UserDTO.New.class) @RequestBody UserDTO userDTO) {
+        return userService.create(userDTO);
     }
 
     @PatchMapping("/{userId}")
-    public User update(@PathVariable Long userId,@Validated(User.Update.class)@RequestBody User user){
-        user.setId(userId);
-        return userService.update(user);
+    public UserDTO update(@PathVariable Long userId, @Validated(UserDTO.Update.class) @RequestBody UserDTO userDTO) {
+        userDTO.setId(userId);
+        return userService.update(userDTO);
     }
 
     @GetMapping
-    public List<User> findAll(){
+    public List<UserDTO> findAll() {
         return userService.findAll();
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId){
-        return userService.getUserById(userId);
+    public UserDTO getUserById(@PathVariable Long userId) {
+        return userService.findUserById(userId);
     }
 }

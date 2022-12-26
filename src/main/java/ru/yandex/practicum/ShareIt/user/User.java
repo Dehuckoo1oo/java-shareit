@@ -1,4 +1,5 @@
-package ru.yandex.practicum.ShareIt.User;
+package ru.yandex.practicum.ShareIt.user;
+
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -12,25 +13,8 @@ import java.util.List;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class User {
-
-    interface New {
-
-    }
-
-    interface Exist {
-
-    }
-
-    interface Update extends Exist{
-
-    }
-
-    @Null(groups = {New.class})
     private Long id;
-    @NotBlank(groups = {New.class})
     private String name;
-    @NotBlank(groups = {New.class})
-    @Email(groups = {New.class})
     private String email;
     private final List<Long> items = new ArrayList<>();
 }
