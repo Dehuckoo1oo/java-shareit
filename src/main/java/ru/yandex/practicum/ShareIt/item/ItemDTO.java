@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import ru.yandex.practicum.ShareIt.groups.Create;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,23 +14,12 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @AllArgsConstructor
 public class ItemDTO {
-    interface New {
-
-    }
-
-    interface Exist {
-
-    }
-
-    interface Update extends Exist {
-
-    }
 
     private Long id;
-    @NotBlank(groups = {ItemDTO.New.class})
+    @NotBlank(groups = {Create.class})
     private String name;
-    @NotBlank(groups = {ItemDTO.New.class})
+    @NotBlank(groups = {Create.class})
     private String description;
-    @NotNull(groups = {ItemDTO.New.class})
+    @NotNull(groups = {Create.class})
     private Boolean available;
 }

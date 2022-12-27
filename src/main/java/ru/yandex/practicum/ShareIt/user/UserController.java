@@ -3,6 +3,8 @@ package ru.yandex.practicum.ShareIt.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.ShareIt.groups.Create;
+import ru.yandex.practicum.ShareIt.groups.Update;
 
 import java.util.List;
 
@@ -22,12 +24,12 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO create(@Validated(UserDTO.New.class) @RequestBody UserDTO userDTO) {
+    public UserDTO create(@Validated(Create.class) @RequestBody UserDTO userDTO) {
         return userService.create(userDTO);
     }
 
     @PatchMapping("/{userId}")
-    public UserDTO update(@PathVariable Long userId, @Validated(UserDTO.Update.class) @RequestBody UserDTO userDTO) {
+    public UserDTO update(@PathVariable Long userId, @Validated(Update.class) @RequestBody UserDTO userDTO) {
         userDTO.setId(userId);
         return userService.update(userDTO);
     }

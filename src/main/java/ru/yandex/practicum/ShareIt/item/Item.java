@@ -2,9 +2,6 @@ package ru.yandex.practicum.ShareIt.item;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @EqualsAndHashCode

@@ -3,6 +3,8 @@ package ru.yandex.practicum.ShareIt.item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.ShareIt.groups.Create;
+import ru.yandex.practicum.ShareIt.groups.Update;
 
 import java.util.List;
 
@@ -23,13 +25,13 @@ public class ItemController {
 
     @PostMapping
     public ItemDTO create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @Validated(ItemDTO.New.class) @RequestBody ItemDTO itemDTO) {
+                          @Validated(Create.class) @RequestBody ItemDTO itemDTO) {
         return itemService.create(itemDTO, userId);
     }
 
     @PatchMapping("/{itemId}")
     public ItemDTO update(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId,
-                          @Validated(ItemDTO.Update.class) @RequestBody ItemDTO itemDTO) {
+                          @Validated(Update.class) @RequestBody ItemDTO itemDTO) {
         return itemService.update(itemDTO, userId, itemId);
     }
 
