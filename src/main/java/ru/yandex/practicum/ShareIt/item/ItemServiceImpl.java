@@ -11,25 +11,26 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemRepository;
     private final UserService userService;
 
-    public ItemServiceImpl(ItemStorage itemStorage, UserService userService) {
-        this.itemStorage = itemStorage;
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService) {
+        this.itemRepository = itemRepository;
         this.userService = userService;
     }
 
     @Override
     public ItemDTO create(ItemDTO itemDTO, Long userId) {
         Item item = ItemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId).getId());
-        return ItemMapper.makeItemDtoFromItem(itemStorage.create(item));
+        return ItemMapper.makeItemDtoFromItem(itemRepository.save(item));
     }
 
     @Override
     public ItemDTO remove(ItemDTO itemDTO, Long userId) {
         Item existItem = getItemById(itemDTO.getId());
         if (existItem.getOwner().equals(userId)) {
-            return ItemMapper.makeItemDtoFromItem(itemStorage.remove(existItem));
+            itemRepository.delete(existItem);
+            return ItemMapper.makeItemDtoFromItem(existItem);
         } else {
             throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
                     existItem.getId(), userId));
@@ -54,13 +55,13 @@ public class ItemServiceImpl implements ItemService {
         if (itemDTO.getAvailable() != null) {
             existItem.setAvailable(itemDTO.getAvailable());
         }
-        return ItemMapper.makeItemDtoFromItem(itemStorage.update(existItem));
+        return ItemMapper.makeItemDtoFromItem(itemRepository.save(existItem));
     }
 
     @Override
     public List<ItemDTO> getItemByUserId(Long ownerId) {
         userService.getUserById(ownerId);
-        List<Item> items = itemStorage.getItemsByUserId(ownerId);
+        List<Item> items = itemRepository.findItemByOwner(ownerId);
         List<ItemDTO> itemsDTO = new ArrayList<>();
         items.forEach(item -> itemsDTO.add(ItemMapper.makeItemDtoFromItem(item)));
         return itemsDTO;
@@ -72,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item getItemById(Long id) {
-        Optional<Item> item = itemStorage.getItemById(id);
+        Optional<Item> item = itemRepository.findItemById(id);
         if (item.isPresent()) {
             return item.get();
         } else {
@@ -85,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        List<Item> items = itemStorage.getAllItems().stream().filter(Item::getAvailable)
+        List<Item> items = itemRepository.findAll().stream().filter(Item::getAvailable)
                 .filter(item -> item
                         .getName().toLowerCase().contains(text.toLowerCase()) ||
                         item.getDescription().toLowerCase().contains(text.toLowerCase()))
