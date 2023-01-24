@@ -12,6 +12,12 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidBody(final UnsupportedStatusException e) {
+        return new ErrorResponse(String.format("Unknown state: %s", e.getParameter()));
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidBody(final MethodArgumentNotValidException e) {
         return new ErrorResponse(String.format("Ошибка валидации: %s", e.getParameter()));
     }
@@ -22,6 +28,11 @@ public class ErrorHandler {
         return new ErrorResponse(String.format("Ошибка валидации: %s", e.getParameter()));
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotFoundResource(final NotFoundResourceException e) {
+        return new ErrorResponse(String.format("Ошибка валидации: %s", e.getParameter()));
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)

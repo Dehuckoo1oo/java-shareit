@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item,Long> {
-    List<Item> findItemByOwner(Long UserId);
+public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findItemById(Long UserId);
 
 }

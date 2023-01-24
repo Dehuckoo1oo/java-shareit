@@ -1,10 +1,11 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import lombok.*;
+import ru.yandex.practicum.ShareIt.item.comments.Comment;
+import ru.yandex.practicum.ShareIt.user.User;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,12 +13,15 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "items",schema = "PUBLIC")
+@Table(name = "items", schema = "PUBLIC")
 public class Item {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
-    private Long owner;
+    @ManyToOne
+    @JoinColumn(name = "owner", referencedColumnName = "id")
+    private User owner;
     private Boolean available;
 }

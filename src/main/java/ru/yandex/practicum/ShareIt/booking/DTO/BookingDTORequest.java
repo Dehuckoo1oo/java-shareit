@@ -1,4 +1,4 @@
-package ru.yandex.practicum.ShareIt.booking;
+package ru.yandex.practicum.ShareIt.booking.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

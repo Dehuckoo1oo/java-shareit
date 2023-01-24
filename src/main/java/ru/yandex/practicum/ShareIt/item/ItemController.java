@@ -5,6 +5,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 import ru.yandex.practicum.ShareIt.groups.Update;
+import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
+import ru.yandex.practicum.ShareIt.item.comments.Comment;
+import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 
 import java.util.List;
 
@@ -19,8 +22,9 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDTO> findItemsByText(@RequestParam String text) {
-        return itemService.findItemsByText(text);
+    public List<ItemDTO> findItemsByText(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @RequestParam String text) {
+        return itemService.findItemsByText(text, userId);
     }
 
     @PostMapping
@@ -36,12 +40,20 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDTO getItemById(@PathVariable Long itemId) {
-        return itemService.findItemById(itemId);
+    public ItemDTO getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+                               @PathVariable Long itemId) {
+        return itemService.findItemById(userId, itemId);
     }
 
     @GetMapping
     public List<ItemDTO> getItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
         return itemService.getItemByUserId(ownerId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDTO createComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                    @PathVariable Long itemId,
+                                    @Validated(Create.class) @RequestBody CommentDTO commentDTO) {
+        return itemService.createComment(commentDTO, userId, itemId);
     }
 }

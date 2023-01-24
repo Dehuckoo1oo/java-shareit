@@ -1,11 +1,9 @@
 package ru.yandex.practicum.ShareIt.user;
 
 import lombok.*;
+import ru.yandex.practicum.ShareIt.item.Item;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +13,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users",schema = "PUBLIC")
+@Table(name = "users", schema = "PUBLIC")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
-    @Transient
-    private final List<Long> items = new ArrayList<>();
+    @OneToMany(mappedBy = "owner")
+    private final List<Item> items = new ArrayList<>();
 }

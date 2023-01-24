@@ -1,7 +1,6 @@
 package ru.yandex.practicum.ShareIt.user;
 
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.ShareIt.exception.ConflictException;
 import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO create(UserDTO userDTO) {
-        checkEmailByUser(userDTO.getEmail());
         User user = UserMapper.makeUserFromUserDTO(userDTO);
         return UserMapper.makeUserDTOFromUser(userRepository.save(user));
     }
@@ -55,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO update(UserDTO userDTO) {
-        checkEmailByUser(userDTO.getEmail());
+
         User user = getUserById(userDTO.getId());
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail());
@@ -67,9 +65,4 @@ public class UserServiceImpl implements UserService {
         return UserMapper.makeUserDTOFromUser(user);
     }
 
-    private void checkEmailByUser(String email) {
-        if (userRepository.findUserByEmailContainingIgnoreCase(email).isPresent()){
-            throw new ConflictException(String.format("Пользователь с эмейлом %s уже сущетвует", email));
-        }
-    }
 }
