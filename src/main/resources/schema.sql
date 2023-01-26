@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS comments cascade;
 CREATE TABLE items
 (
     id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name        varchar(255),
+    name        varchar(128),
     description varchar(255),
     owner       bigint,
     available   boolean
@@ -15,8 +15,8 @@ CREATE TABLE items
 CREATE TABLE users
 (
     id    bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name  varchar(255),
-    email varchar(255),
+    name  varchar(64),
+    email varchar(64),
         constraint un_user_email unique (email)
 );
 
@@ -27,13 +27,13 @@ CREATE TABLE bookings
     end_date   TIMESTAMP WITHOUT TIME ZONE,
     item_id    bigint,
     booker_id  bigint,
-    status     varchar(255)
+    status     varchar(32)
 );
 
 CREATE TABLE comments
 (
     id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    text      varchar(64),
+    text      varchar(255),
     item_id   bigint,
     author_id bigint
 );

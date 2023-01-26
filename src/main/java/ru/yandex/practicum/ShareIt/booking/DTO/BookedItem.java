@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BookedItem {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
 
 
     public BookedItem(Long id, String name) {

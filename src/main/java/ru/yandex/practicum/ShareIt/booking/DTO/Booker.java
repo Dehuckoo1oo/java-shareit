@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Booker {
-    Long id;
+    private Long id;
 
     public Booker(Long id) {
         this.id = id;

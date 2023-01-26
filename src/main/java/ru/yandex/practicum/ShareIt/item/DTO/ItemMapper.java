@@ -20,9 +20,9 @@ import java.util.List;
 @Component
 public class ItemMapper {
 
-    BookingRepository bookingRepository;
-    CommentRepository commentRepository;
-    CommentMapper commentMapper;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Autowired
     public ItemMapper(BookingRepository bookingRepository, CommentRepository commentRepository,
