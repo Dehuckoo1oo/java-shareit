@@ -15,7 +15,7 @@ public interface ItemService {
 
     public List<ItemDTO> getItemByUserId(Long ownerId);
 
-    public ItemDTO findItemById(Long UserId, Long id);
+    public ItemDTO findItemById(Long userId, Long id);
 
     public List<ItemDTO> findItemsByText(String text, Long userId);
 
