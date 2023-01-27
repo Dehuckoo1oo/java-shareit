@@ -1,7 +1,6 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
-import ru.yandex.practicum.ShareIt.item.comments.Comment;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 
 import java.util.List;

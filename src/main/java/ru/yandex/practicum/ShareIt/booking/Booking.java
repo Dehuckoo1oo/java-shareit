@@ -5,8 +5,6 @@ import ru.yandex.practicum.ShareIt.item.Item;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter

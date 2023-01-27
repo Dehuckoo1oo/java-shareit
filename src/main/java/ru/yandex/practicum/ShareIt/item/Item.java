@@ -1,11 +1,9 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import lombok.*;
-import ru.yandex.practicum.ShareIt.item.comments.Comment;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter

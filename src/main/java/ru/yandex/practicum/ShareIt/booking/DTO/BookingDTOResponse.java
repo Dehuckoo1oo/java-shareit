@@ -5,11 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ru.yandex.practicum.ShareIt.booking.Status;
-import ru.yandex.practicum.ShareIt.groups.Create;
-import ru.yandex.practicum.ShareIt.item.Item;
-import ru.yandex.practicum.ShareIt.user.User;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter

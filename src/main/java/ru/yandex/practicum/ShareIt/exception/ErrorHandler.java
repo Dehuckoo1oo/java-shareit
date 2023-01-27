@@ -40,12 +40,6 @@ public class ErrorHandler {
         return new ErrorResponse(String.format("Запрашиваемый %s или не найден", e.getParameter()));
     }
 
-    /*@ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse HandleException(final Throwable e) {
-        return new ErrorResponse(String.format("Ошибка с телом %s", e.getMessage()));
-    }*/
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleInvalidBody(final ConflictException e) {
@@ -53,15 +47,3 @@ public class ErrorHandler {
     }
 }
 
-class ErrorResponse {
-
-    private final String error;
-
-    public ErrorResponse(String error) {
-        this.error = error;
-    }
-
-    public String getError() {
-        return error;
-    }
-}

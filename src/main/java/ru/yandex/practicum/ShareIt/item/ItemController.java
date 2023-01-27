@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 import ru.yandex.practicum.ShareIt.groups.Update;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
-import ru.yandex.practicum.ShareIt.item.comments.Comment;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 
 import java.util.List;
