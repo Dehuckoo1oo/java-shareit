@@ -1,5 +1,8 @@
 package ru.yandex.practicum.ShareIt.item;
 
+import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
+import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
+
 import java.util.List;
 
 public interface ItemService {
@@ -12,8 +15,12 @@ public interface ItemService {
 
     public List<ItemDTO> getItemByUserId(Long ownerId);
 
-    public ItemDTO findItemById(Long id);
+    public ItemDTO findItemById(Long userId, Long id);
 
-    public List<ItemDTO> findItemsByText(String text);
+    public List<ItemDTO> findItemsByText(String text, Long userId);
+
+    public Item getItemById(Long id);
+
+    public CommentDTO createComment(CommentDTO commentDTO, Long userId, Long itemId);
 
 }

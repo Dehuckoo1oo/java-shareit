@@ -1,24 +1,21 @@
-package ru.yandex.practicum.ShareIt.booking;
+package ru.yandex.practicum.ShareIt.item.comments;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import ru.yandex.practicum.ShareIt.groups.Create;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-public class BookingDTO {
-    @NotBlank
+public class CommentDTO {
     private Long id;
-    @NotBlank
+    @NotBlank(groups = {Create.class})
+    private String text;
     private Long itemId;
-    @NotBlank
-    private Long userId;
-    private LocalDate dateFrom;
-    private LocalDate dateTo;
+    private String authorName;
 }

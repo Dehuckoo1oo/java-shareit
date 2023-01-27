@@ -1,35 +1,57 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.ShareIt.booking.Booking;
+import ru.yandex.practicum.ShareIt.booking.BookingRepository;
+import ru.yandex.practicum.ShareIt.booking.Status;
+import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
+import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
+import ru.yandex.practicum.ShareIt.item.DTO.ItemMapper;
+import ru.yandex.practicum.ShareIt.item.comments.*;
+import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserService;
 import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemRepository;
     private final UserService userService;
+    private final ItemMapper itemMapper;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
+    private final BookingRepository bookingRepository;
 
-    public ItemServiceImpl(ItemStorage itemStorage, UserService userService) {
-        this.itemStorage = itemStorage;
+
+    public ItemServiceImpl(ItemRepository itemRepository, UserService userService, ItemMapper itemMapper,
+                           CommentRepository commentRepository, CommentMapper commentMapper,
+                           BookingRepository bookingRepository) {
+        this.itemRepository = itemRepository;
         this.userService = userService;
+        this.itemMapper = itemMapper;
+        this.commentRepository = commentRepository;
+        this.commentMapper = commentMapper;
+        this.bookingRepository = bookingRepository;
     }
 
     @Override
     public ItemDTO create(ItemDTO itemDTO, Long userId) {
-        Item item = ItemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId).getId());
-        return ItemMapper.makeItemDtoFromItem(itemStorage.create(item));
+        Item item = ItemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
+        return itemMapper.makeItemDtoFromItem(itemRepository.save(item), userId);
     }
 
     @Override
     public ItemDTO remove(ItemDTO itemDTO, Long userId) {
         Item existItem = getItemById(itemDTO.getId());
-        if (existItem.getOwner().equals(userId)) {
-            return ItemMapper.makeItemDtoFromItem(itemStorage.remove(existItem));
+        if (existItem.getOwner().getId().equals(userId)) {
+            itemRepository.delete(existItem);
+            return itemMapper.makeItemDtoFromItem(existItem, userId);
         } else {
             throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
                     existItem.getId(), userId));
@@ -41,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
 
         //itemDTO.setId(itemId);
         Item existItem = getItemById(itemId);
-        if (!existItem.getOwner().equals(userId)) {
+        if (!existItem.getOwner().getId().equals(userId)) {
             throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
                     itemId, userId));
         }
@@ -54,25 +76,26 @@ public class ItemServiceImpl implements ItemService {
         if (itemDTO.getAvailable() != null) {
             existItem.setAvailable(itemDTO.getAvailable());
         }
-        return ItemMapper.makeItemDtoFromItem(itemStorage.update(existItem));
+        return itemMapper.makeItemDtoFromItem(itemRepository.save(existItem), userId);
     }
 
     @Override
     public List<ItemDTO> getItemByUserId(Long ownerId) {
-        userService.getUserById(ownerId);
-        List<Item> items = itemStorage.getItemsByUserId(ownerId);
+        User owner = userService.getUserById(ownerId);
+        List<Item> items = owner.getItems();
         List<ItemDTO> itemsDTO = new ArrayList<>();
-        items.forEach(item -> itemsDTO.add(ItemMapper.makeItemDtoFromItem(item)));
+        items.forEach(item -> itemsDTO.add(itemMapper.makeItemDtoFromItem(item, ownerId)));
+        itemsDTO.sort(Comparator.comparing(ItemDTO::getId));
         return itemsDTO;
     }
 
     @Override
-    public ItemDTO findItemById(Long id) {
-        return ItemMapper.makeItemDtoFromItem(getItemById(id));
+    public ItemDTO findItemById(Long userId, Long id) {
+        return itemMapper.makeItemDtoFromItem(getItemById(id), userId);
     }
 
-    private Item getItemById(Long id) {
-        Optional<Item> item = itemStorage.getItemById(id);
+    public Item getItemById(Long id) {
+        Optional<Item> item = itemRepository.findItemById(id);
         if (item.isPresent()) {
             return item.get();
         } else {
@@ -81,18 +104,34 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDTO> findItemsByText(String text) {
+    public List<ItemDTO> findItemsByText(String text, Long userId) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        List<Item> items = itemStorage.getAllItems().stream().filter(Item::getAvailable)
+        List<Item> items = itemRepository.findAll().stream().filter(Item::getAvailable)
                 .filter(item -> item
                         .getName().toLowerCase().contains(text.toLowerCase()) ||
                         item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .collect(Collectors.toList());
 
         List<ItemDTO> itemsDTO = new ArrayList<>();
-        items.forEach(item -> itemsDTO.add(ItemMapper.makeItemDtoFromItem(item)));
+        items.forEach(item -> itemsDTO.add(itemMapper.makeItemDtoFromItem(item, userId)));
         return itemsDTO;
+    }
+
+    @Override
+    public CommentDTO createComment(CommentDTO commentDTO, Long userId, Long itemId) {
+        Booking bookingExist = bookingRepository.findAllByItem_Id(itemId).stream()
+                .filter(booking -> booking.getBooker().getId().equals(userId))
+                .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()))
+                .filter(booking -> booking.getStatus().equals(Status.APPROVED))
+                .findFirst()
+                .orElseThrow(() -> {
+                    throw new UnsupportedStatusException(
+                            String.format("Данный пользователь не брал в аренду предмет с id %s", itemId));
+                });
+
+        Comment comment = commentMapper.mapDTOToEntity(commentDTO, userId, itemId);
+        return commentMapper.mapEntityToDTO(commentRepository.save(comment));
     }
 }
