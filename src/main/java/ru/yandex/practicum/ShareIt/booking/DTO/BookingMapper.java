@@ -1,5 +1,6 @@
 package ru.yandex.practicum.ShareIt.booking.DTO;
 
+import org.springframework.data.domain.Page;
 import ru.yandex.practicum.ShareIt.booking.Booking;
 
 import java.util.ArrayList;
