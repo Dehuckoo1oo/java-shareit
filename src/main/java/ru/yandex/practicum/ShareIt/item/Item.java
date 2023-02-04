@@ -1,6 +1,8 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
+import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import javax.persistence.*;
@@ -22,6 +24,9 @@ public class Item {
     @JoinColumn(name = "owner", referencedColumnName = "id")
     private User owner;
     private Boolean available;
+    @OneToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    private Request request;
 }
 
 

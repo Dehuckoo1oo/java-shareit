@@ -42,8 +42,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO create(ItemDTO itemDTO, Long userId) {
-        Item item = ItemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
-        return itemMapper.makeItemDtoFromItem(itemRepository.save(item), userId);
+        Item item = itemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
+        item = itemRepository.save(item);
+        return itemMapper.makeItemDtoFromItem(item, userId);
     }
 
     @Override

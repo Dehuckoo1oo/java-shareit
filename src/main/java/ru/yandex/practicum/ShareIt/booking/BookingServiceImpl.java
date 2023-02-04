@@ -1,6 +1,9 @@
 package ru.yandex.practicum.ShareIt.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
@@ -14,8 +17,11 @@ import ru.yandex.practicum.ShareIt.item.ItemService;
 import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserService;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -87,56 +93,73 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByCurrentUser(Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByCurrentUser(String from, String size,Long userId, String strState) {
         State state = checkStatus(strState);
-
-        userService.getUserById(userId);
+        int intFrom = Integer.parseInt(from);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
+        int intSize = Integer.parseInt(size);
+        if (intFrom < 0 || intSize < 0) {
+            throw new NotFoundResourceException("Не верно заданны ограничения");
+        }
+        Pageable page = PageRequest.of(intFrom, intSize, sortBy);
+
+       User user = userService.getUserById(userId);
         if (state.equals(State.ALL)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_Id(userId, sortBy));
+            Page<Booking> pageList = bookingRepository.findAllByBooker(user, page);
+            return BookingMapper.mapEntityToDTOList(pageList.getContent());
         } else if (state.equals(State.CURRENT)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
+                    LocalDateTime.now(), LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.PAST)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
+                    LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.FUTURE)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
+                    LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.WAITING)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.WAITING, sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStatus(userId,
+                    Status.WAITING, page).getContent());
         } else if (state.equals(State.REJECTED)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.REJECTED, sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStatus(userId,
+                    Status.REJECTED, page).getContent());
         } else {
             return null;
         }
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByOwnerItems(Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByOwnerItems(String from, String size,Long userId, String strState) {
         State state = checkStatus(strState);
         userService.getUserById(userId);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-
+        int intFrom = Integer.parseInt(from);
+        int intSize = Integer.parseInt(size);
+        if (intFrom < 0 || intSize < 0) {
+            throw new NotFoundResourceException("Не верно заданны ограничения");
+        }
+        Pageable page = PageRequest.of(intFrom, intSize, sortBy);
         if (state.equals(State.ALL)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, sortBy));
+            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, page).getContent());
         } else if (state.equals(State.CURRENT)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.PAST)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.FUTURE)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), page).getContent());
         } else if (state.equals(State.WAITING)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.WAITING, sortBy));
+                    Status.WAITING, page).getContent());
         } else if (state.equals(State.REJECTED)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.REJECTED, sortBy));
+                    Status.REJECTED, page).getContent());
         } else {
             return null;
         }
