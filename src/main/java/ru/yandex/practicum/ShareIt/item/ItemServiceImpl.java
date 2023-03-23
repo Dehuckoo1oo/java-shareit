@@ -141,14 +141,14 @@ public class ItemServiceImpl implements ItemService {
         return commentMapper.mapEntityToDTO(commentRepository.save(comment));
     }
 
-    private Pageable makePageable(String from, String size, Sort sort){
+    private Pageable makePageable(String from, String size, Sort sort) {
         int intFrom = Integer.parseInt(from);
         int intSize = Integer.parseInt(size);
         if (intFrom < 0 || intSize < 0) {
             throw new NotFoundResourceException("Не верно заданны ограничения");
         }
         int page = 0;
-        if(intFrom != 0){
+        if (intFrom != 0) {
             page = intFrom / intSize;
         }
         return PageRequest.of(page, intSize, sort);

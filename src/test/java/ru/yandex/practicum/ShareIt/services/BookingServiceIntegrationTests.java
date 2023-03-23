@@ -69,8 +69,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "ALL");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "ALL");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -81,8 +81,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "CURRENT");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "CURRENT");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -94,8 +94,8 @@ public class BookingServiceIntegrationTests {
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         bookingDTORequest.setEnd(LocalDateTime.now().minusHours(4));
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "PAST");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "PAST");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -108,8 +108,8 @@ public class BookingServiceIntegrationTests {
         bookingDTORequest.setStart(LocalDateTime.now().plusDays(1));
         bookingDTORequest.setEnd(LocalDateTime.now().plusDays(4));
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "FUTURE");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "FUTURE");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -120,8 +120,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "WAITING");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "WAITING");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -133,8 +133,8 @@ public class BookingServiceIntegrationTests {
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
         bookingService.updateStatus(owner.getId(), bookingDTOResponse.getId(), false);
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByCurrentUser("0", "15", booker.getId(), "REJECTED");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByCurrentUser("0", "15", booker.getId(), "REJECTED");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -145,8 +145,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "ALL");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "ALL");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -157,8 +157,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "CURRENT");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "CURRENT");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -170,8 +170,8 @@ public class BookingServiceIntegrationTests {
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         bookingDTORequest.setEnd(LocalDateTime.now().minusHours(4));
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "PAST");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "PAST");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -184,8 +184,8 @@ public class BookingServiceIntegrationTests {
         bookingDTORequest.setStart(LocalDateTime.now().plusDays(1));
         bookingDTORequest.setEnd(LocalDateTime.now().plusDays(4));
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "FUTURE");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "FUTURE");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -196,8 +196,8 @@ public class BookingServiceIntegrationTests {
         UserDTO booker = userService.create(makeUserDTO("booker"));
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "WAITING");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "WAITING");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 
@@ -209,8 +209,8 @@ public class BookingServiceIntegrationTests {
         BookingDTORequest bookingDTORequest = makeNewBooking(booker, itemDTO);
         BookingDTOResponse bookingDTOResponse = bookingService.create(bookingDTORequest, booker.getId());
         bookingService.updateStatus(owner.getId(), bookingDTOResponse.getId(), false);
-        List<BookingDTOResponse> bookingDTOResponses = bookingService.
-                getBookingByOwnerItems("0", "15", owner.getId(), "REJECTED");
+        List<BookingDTOResponse> bookingDTOResponses = bookingService
+                .getBookingByOwnerItems("0", "15", owner.getId(), "REJECTED");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
     }
 

@@ -29,7 +29,7 @@ public class ItemMapper {
 
     @Autowired
     public ItemMapper(BookingRepository bookingRepository, CommentRepository commentRepository,
-                      CommentMapper commentMapper,RequestRepository requestRepository) {
+                      CommentMapper commentMapper, RequestRepository requestRepository) {
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
@@ -55,25 +55,25 @@ public class ItemMapper {
                 .forEach(comment -> comments.add(commentMapper.mapEntityToDTO(comment)));
         Request request = item.getRequest();
         Long requestId = null;
-        if(request != null){
+        if (request != null) {
             requestId = request.getId();
         }
         return new ItemDTO(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
-                mapToLastOrNextBooking(lastBooking), mapToLastOrNextBooking(nextBooking), comments,requestId);
+                mapToLastOrNextBooking(lastBooking), mapToLastOrNextBooking(nextBooking), comments, requestId);
     }
 
     public Item makeItemFromItemDTO(ItemDTO itemDTO, User owner) {
         Long requestId = itemDTO.getRequestId();
         Request request = null;
-        if(requestId != null){
+        if (requestId != null) {
             request = requestRepository.findById(itemDTO.getRequestId()).orElse(null);
         }
         return new Item(itemDTO.getId(), itemDTO.getName(), itemDTO.getDescription(), owner, itemDTO.getAvailable(),
                 request);
     }
 
-    public ItemForRequestDTO makeItemForRequestDTO(Item item){
-        return new ItemForRequestDTO(item.getId(), item.getName(), item.getDescription(),item.getAvailable(),
+    public ItemForRequestDTO makeItemForRequestDTO(Item item) {
+        return new ItemForRequestDTO(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
                 item.getRequest().getId());
     }
 

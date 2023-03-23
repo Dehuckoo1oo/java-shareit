@@ -58,26 +58,26 @@ public class RequestServiceImpl implements RequestService {
     public List<OwnedRequestDTO> findAll(String from, String size, Long userId) {
         User user = userService.getUserById(userId);
         List<OwnedRequestDTO> requestDTOs = new ArrayList<>();
-        if(from == null || size == null){
+        if (from == null || size == null) {
             requestRepository.findAllExcept(user).forEach(request -> requestDTOs.add(requestMapper.makeOwnerDTOFromRequest(request)));
             return requestDTOs;
         }
         Sort sortBy = Sort.by(Sort.Direction.DESC, "created");
 
-        Pageable page = makePageable(from,size,sortBy);
-        Page<Request> requestPage = requestRepository.findAllExcept(user,page);
+        Pageable page = makePageable(from, size, sortBy);
+        Page<Request> requestPage = requestRepository.findAllExcept(user, page);
         requestPage.getContent().forEach(request -> requestDTOs.add(requestMapper.makeOwnerDTOFromRequest(request)));
         return requestDTOs;
     }
 
-    private Pageable makePageable(String from, String size, Sort sort){
+    private Pageable makePageable(String from, String size, Sort sort) {
         int intFrom = Integer.parseInt(from);
         int intSize = Integer.parseInt(size);
         if (intFrom < 0 || intSize < 0) {
             throw new NotFoundResourceException("Не верно заданны ограничения");
         }
         int page = 0;
-        if(intFrom != 0){
+        if (intFrom != 0) {
             page = intFrom / intSize;
         }
         return PageRequest.of(page, intSize, sort);
