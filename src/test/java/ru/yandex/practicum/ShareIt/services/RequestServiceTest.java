@@ -23,15 +23,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @SpringBootTest
 public class RequestServiceTest {
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    ItemService itemService;
+    private ItemService itemService;
     @Autowired
-    BookingService bookingService;
+    private BookingService bookingService;
     @Autowired
-    RequestService requestService;
+    private RequestService requestService;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void truncateTables() {

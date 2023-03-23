@@ -17,9 +17,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class UserServiceIntegrationTest {
 
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void truncateTables() {

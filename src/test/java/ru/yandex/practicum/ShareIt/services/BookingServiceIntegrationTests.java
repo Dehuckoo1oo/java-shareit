@@ -24,13 +24,13 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest
 public class BookingServiceIntegrationTests {
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    ItemService itemService;
+    private ItemService itemService;
     @Autowired
-    BookingService bookingService;
+    private BookingService bookingService;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void truncateTables() {
