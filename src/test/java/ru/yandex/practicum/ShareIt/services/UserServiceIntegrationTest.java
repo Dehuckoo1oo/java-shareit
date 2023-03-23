@@ -57,6 +57,4 @@ public class UserServiceIntegrationTest {
     private UserDTO makeUserDTO(String name) {
         return new UserDTO(1L, name, name + "@icloud.com");
     }
-
-
 }

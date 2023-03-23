@@ -25,10 +25,6 @@ public class RequestServiceTest {
     @Autowired
     private UserService userService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private BookingService bookingService;
-    @Autowired
     private RequestService requestService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -66,7 +62,6 @@ public class RequestServiceTest {
         assertThat("Не найден запрос вещи", ownedRequestDTOs.size() == 1);
     }
 
-
     private RequestDTO makeRequestDTO() {
         return new RequestDTO(1L, LocalDateTime.now(), "I need some Item");
     }
@@ -75,16 +70,4 @@ public class RequestServiceTest {
         return new UserDTO(1L, name, name + "@icloud.com");
     }
 
-    private ItemDTO makeItemDTO(String name) {
-        return new ItemDTO(1L, "name", "just " + name, true, null,
-                null, null, null);
-    }
-
-    private BookingDTORequest makeNewBooking(UserDTO userDTO, ItemDTO itemDTO) {
-        return new BookingDTORequest(null,
-                LocalDateTime.now().minusDays(1L),
-                LocalDateTime.now().plusDays(1L),
-                itemDTO.getId(),
-                userDTO.getId());
-    }
 }
