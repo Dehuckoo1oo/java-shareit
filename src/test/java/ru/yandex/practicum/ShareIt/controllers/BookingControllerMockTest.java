@@ -100,7 +100,7 @@ public class BookingControllerMockTest {
 
     @Test
     public void getBookingByCurrentUserTest() throws Exception {
-        when(bookingService.getBookingByCurrentUser( any(), any(), any(), any())).thenReturn(List.of(bookingDTOResponse));
+        when(bookingService.getBookingByCurrentUser(any(), any(), any(), any())).thenReturn(List.of(bookingDTOResponse));
         State state = State.CURRENT;
         mvc.perform(get("/bookings?state={state}", state)
                         .content(mapper.writeValueAsString(bookingDTOResponse))
