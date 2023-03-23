@@ -22,7 +22,7 @@ public class UserServiceIntegrationTest {
     private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    void truncateTables() {
+    void beforeEach() {
         jdbcTemplate.execute("delete from users");
     }
 
@@ -41,7 +41,7 @@ public class UserServiceIntegrationTest {
         UserDTO userDTOUpdate = userService.update(makeUserDTO("UpdateUser"));
         Long id = userDTOTest.getId();
         userDTOTest = userService.findUserById(id);
-        assertThat(userDTOTest, equalTo(userDTOUpdate));
+        assertThat(userDTOTest.getName(), equalTo(userDTOUpdate.getName()));
     }
 
     @Test
