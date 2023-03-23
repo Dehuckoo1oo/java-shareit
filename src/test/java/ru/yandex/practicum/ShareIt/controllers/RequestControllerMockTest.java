@@ -12,13 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemForRequestDTO;
 import ru.yandex.practicum.ShareIt.requests.DTO.OwnedRequestDTO;
 import ru.yandex.practicum.ShareIt.requests.DTO.RequestDTO;
 import ru.yandex.practicum.ShareIt.requests.RequestController;
 import ru.yandex.practicum.ShareIt.requests.RequestService;
-import ru.yandex.practicum.ShareIt.user.User;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;

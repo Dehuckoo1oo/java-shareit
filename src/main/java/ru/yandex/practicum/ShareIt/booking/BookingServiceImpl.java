@@ -17,11 +17,8 @@ import ru.yandex.practicum.ShareIt.item.ItemService;
 import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserService;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -93,45 +90,45 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByCurrentUser(String from, String size,Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByCurrentUser(String from, String size, Long userId, String strState) {
         State state = checkStatus(strState);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-        Pageable pageable = makePageable(from,size,sortBy);
-       User user = userService.getUserById(userId);
+        Pageable pageable = makePageable(from, size, sortBy);
+        User user = userService.getUserById(userId);
         if (state.equals(State.ALL)) {
             Page<Booking> pageList = bookingRepository.findAllByBooker(user, pageable);
             return BookingMapper.mapEntityToDTOList(pageList.getContent());
         } else if (state.equals(State.CURRENT)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
+                            LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.PAST)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), pageable).getContent());
+                            LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.FUTURE)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), pageable).getContent());
+                            LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.WAITING)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.WAITING, pageable).getContent());
+                            Status.WAITING, pageable).getContent());
         } else if (state.equals(State.REJECTED)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.REJECTED, pageable).getContent());
+                            Status.REJECTED, pageable).getContent());
         } else {
             return null;
         }
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByOwnerItems(String from, String size,Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByOwnerItems(String from, String size, Long userId, String strState) {
         State state = checkStatus(strState);
         userService.getUserById(userId);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-        Pageable pageable = makePageable(from,size,sortBy);
+        Pageable pageable = makePageable(from, size, sortBy);
         if (state.equals(State.ALL)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, pageable).getContent());
         } else if (state.equals(State.CURRENT)) {
@@ -164,14 +161,14 @@ public class BookingServiceImpl implements BookingService {
         return state;
     }
 
-    private Pageable makePageable(String from, String size, Sort sort){
+    private Pageable makePageable(String from, String size, Sort sort) {
         int intFrom = Integer.parseInt(from);
         int intSize = Integer.parseInt(size);
         if (intFrom < 0 || intSize < 0) {
             throw new NotFoundResourceException("Не верно заданны ограничения");
         }
         int page = 0;
-        if(intFrom != 0){
+        if (intFrom != 0) {
             page = intFrom / intSize;
         }
         return PageRequest.of(page, intSize, sort);

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.ShareIt.item;
 
 import lombok.*;
-import org.springframework.lang.Nullable;
 import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.user.User;
 

@@ -74,16 +74,16 @@ public class ItemServiceIntegrationTest {
         UserDTO owner = userService.create(makeUserDTO("owner"));
         ItemDTO itemDTO = itemService.create(makeItemDTO("TestItem1"), owner.getId());
         UserDTO booker = userService.create(makeUserDTO("booker"));
-        BookingDTOResponse bookingDTOResponse = bookingService.create(makeNewBooking(booker,itemDTO),booker.getId());
-        bookingService.updateStatus(owner.getId(),bookingDTOResponse.getId(),true);
-        CommentDTO commentDTO = itemService.createComment(makeCommentDTO(booker),booker.getId(),itemDTO.getId());
-        ItemDTO itemWithComment = itemService.findItemById(owner.getId(),itemDTO.getId());
-        assertThat(commentDTO,equalTo(itemWithComment.getComments().get(0)));
+        BookingDTOResponse bookingDTOResponse = bookingService.create(makeNewBooking(booker, itemDTO), booker.getId());
+        bookingService.updateStatus(owner.getId(), bookingDTOResponse.getId(), true);
+        CommentDTO commentDTO = itemService.createComment(makeCommentDTO(booker), booker.getId(), itemDTO.getId());
+        ItemDTO itemWithComment = itemService.findItemById(owner.getId(), itemDTO.getId());
+        assertThat(commentDTO, equalTo(itemWithComment.getComments().get(0)));
     }
 
 
     private UserDTO makeUserDTO(String name) {
-        return new UserDTO(1L, name,  name + "@icloud.com");
+        return new UserDTO(1L, name, name + "@icloud.com");
     }
 
     private ItemDTO makeItemDTO(String name) {
@@ -91,7 +91,7 @@ public class ItemServiceIntegrationTest {
                 null, null, null);
     }
 
-    private BookingDTORequest makeNewBooking(UserDTO userDTO,ItemDTO itemDTO) {
+    private BookingDTORequest makeNewBooking(UserDTO userDTO, ItemDTO itemDTO) {
         return new BookingDTORequest(null,
                 LocalDateTime.now().minusDays(1L),
                 LocalDateTime.now().plusDays(1L),
@@ -100,6 +100,6 @@ public class ItemServiceIntegrationTest {
     }
 
     private CommentDTO makeCommentDTO(UserDTO booker) {
-        return new CommentDTO(null,"Nice item",1L,booker.getName());
+        return new CommentDTO(null, "Nice item", 1L, booker.getName());
     }
 }

@@ -2,7 +2,6 @@ package ru.yandex.practicum.ShareIt.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
@@ -49,7 +48,7 @@ public class BookingController {
                                                            @RequestParam(required = false,
                                                                    defaultValue = "0") String from,
                                                            @RequestParam(required = false,
-                                                                   defaultValue = "9999999") String size){
+                                                                   defaultValue = "9999999") String size) {
         return bookingService.getBookingByOwnerItems(from, size, userId, state);
     }
 

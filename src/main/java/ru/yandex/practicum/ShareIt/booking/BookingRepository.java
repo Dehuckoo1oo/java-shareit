@@ -2,12 +2,8 @@ package ru.yandex.practicum.ShareIt.booking;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import java.time.LocalDateTime;
@@ -34,5 +30,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
     Page<Booking> findAllByItem_Owner_IdAndStartIsAfter(Long bookerId, LocalDateTime start, Pageable pageable);
 
     Page<Booking> findAllByItem_Owner_IdAndStatus(Long bookerId, Status status, Pageable pageable);
+
     Page<Booking> findAllByItem_Owner_Id(Long ownerId, Pageable pageable);
 }

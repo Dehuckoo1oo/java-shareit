@@ -4,7 +4,6 @@ import lombok.*;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -26,7 +25,7 @@ public class Request {
     private String description;
 
     @PrePersist
-    protected void onCreate(){
+    protected void onCreate() {
         created = LocalDateTime.now();
     }
 }

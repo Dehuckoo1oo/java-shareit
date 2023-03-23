@@ -3,10 +3,8 @@ package ru.yandex.practicum.ShareIt.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
 import ru.yandex.practicum.ShareIt.user.UserService;
 

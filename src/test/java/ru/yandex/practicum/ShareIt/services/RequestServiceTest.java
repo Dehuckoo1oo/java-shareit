@@ -44,8 +44,8 @@ public class RequestServiceTest {
     @Test
     public void createTest() {
         UserDTO requester = userService.create(makeUserDTO("Mike"));
-        RequestDTO requestDTO = requestService.create(makeRequestDTO(),requester.getId());
-        OwnedRequestDTO ownedRequestDTO = requestService.findRequestByOwnerAndId(requester.getId(),requestDTO.getId());
+        RequestDTO requestDTO = requestService.create(makeRequestDTO(), requester.getId());
+        OwnedRequestDTO ownedRequestDTO = requestService.findRequestByOwnerAndId(requester.getId(), requestDTO.getId());
         assertThat("Не найден запрос вещи", requestDTO.getId().equals(ownedRequestDTO.getId()));
     }
 
@@ -53,23 +53,22 @@ public class RequestServiceTest {
     public void findAllTest() {
         UserDTO requester = userService.create(makeUserDTO("Mike"));
         UserDTO secondRequester = userService.create(makeUserDTO("Carl"));
-        RequestDTO requestDTO = requestService.create(makeRequestDTO(),requester.getId());
-        List<OwnedRequestDTO> ownedRequestDTOs = requestService.findAll("0","15",secondRequester.getId());
+        RequestDTO requestDTO = requestService.create(makeRequestDTO(), requester.getId());
+        List<OwnedRequestDTO> ownedRequestDTOs = requestService.findAll("0", "15", secondRequester.getId());
         assertThat("Не найден запрос вещи", ownedRequestDTOs.size() == 1);
     }
 
     @Test
     public void findRequestsByOwner() {
         UserDTO requester = userService.create(makeUserDTO("Mike"));
-        RequestDTO requestDTO = requestService.create(makeRequestDTO(),requester.getId());
+        RequestDTO requestDTO = requestService.create(makeRequestDTO(), requester.getId());
         List<OwnedRequestDTO> ownedRequestDTOs = requestService.findRequestsByOwner(requester.getId());
         assertThat("Не найден запрос вещи", ownedRequestDTOs.size() == 1);
     }
 
 
-
     private RequestDTO makeRequestDTO() {
-        return new RequestDTO(1L,LocalDateTime.now(),"I need some Item");
+        return new RequestDTO(1L, LocalDateTime.now(), "I need some Item");
     }
 
     private UserDTO makeUserDTO(String name) {
