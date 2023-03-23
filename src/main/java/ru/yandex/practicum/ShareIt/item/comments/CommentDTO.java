@@ -1,9 +1,6 @@
 package ru.yandex.practicum.ShareIt.item.comments;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 
 import javax.validation.constraints.NotBlank;
@@ -12,6 +9,8 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CommentDTO {
     private Long id;
     @NotBlank(groups = {Create.class})

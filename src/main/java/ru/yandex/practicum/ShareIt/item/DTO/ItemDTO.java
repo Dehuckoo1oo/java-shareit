@@ -1,9 +1,6 @@
 package ru.yandex.practicum.ShareIt.item.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 import ru.yandex.practicum.ShareIt.item.LastOrNextBooking;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
@@ -16,6 +13,8 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ItemDTO {
 
     private Long id;

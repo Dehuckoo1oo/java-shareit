@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 public class RequestDTO {
     private Long id;
     private LocalDateTime created;

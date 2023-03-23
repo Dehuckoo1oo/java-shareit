@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
-    BookingRepository bookingRepository;
-    UserService userService;
-    ItemService itemService;
+    private final BookingRepository bookingRepository;
+    private final UserService userService;
+    private final ItemService itemService;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, UserService userService, ItemService itemService) {
@@ -95,38 +95,32 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDTOResponse> getBookingByCurrentUser(String from, String size,Long userId, String strState) {
         State state = checkStatus(strState);
-        int intFrom = Integer.parseInt(from);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-        int intSize = Integer.parseInt(size);
-        if (intFrom < 0 || intSize < 0) {
-            throw new NotFoundResourceException("Не верно заданны ограничения");
-        }
-        Pageable page = PageRequest.of(intFrom, intSize, sortBy);
-
+        Pageable pageable = makePageable(from,size,sortBy);
        User user = userService.getUserById(userId);
         if (state.equals(State.ALL)) {
-            Page<Booking> pageList = bookingRepository.findAllByBooker(user, page);
+            Page<Booking> pageList = bookingRepository.findAllByBooker(user, pageable);
             return BookingMapper.mapEntityToDTOList(pageList.getContent());
         } else if (state.equals(State.CURRENT)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.PAST)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.FUTURE)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.WAITING)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.WAITING, page).getContent());
+                    Status.WAITING, pageable).getContent());
         } else if (state.equals(State.REJECTED)) {
             return BookingMapper.mapEntityToDTOList(
                     bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.REJECTED, page).getContent());
+                    Status.REJECTED, pageable).getContent());
         } else {
             return null;
         }
@@ -137,29 +131,24 @@ public class BookingServiceImpl implements BookingService {
         State state = checkStatus(strState);
         userService.getUserById(userId);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-        int intFrom = Integer.parseInt(from);
-        int intSize = Integer.parseInt(size);
-        if (intFrom < 0 || intSize < 0) {
-            throw new NotFoundResourceException("Не верно заданны ограничения");
-        }
-        Pageable page = PageRequest.of(intFrom, intSize, sortBy);
+        Pageable pageable = makePageable(from,size,sortBy);
         if (state.equals(State.ALL)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, page).getContent());
+            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, pageable).getContent());
         } else if (state.equals(State.CURRENT)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.PAST)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.FUTURE)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), page).getContent());
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.WAITING)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.WAITING, page).getContent());
+                    Status.WAITING, pageable).getContent());
         } else if (state.equals(State.REJECTED)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.REJECTED, page).getContent());
+                    Status.REJECTED, pageable).getContent());
         } else {
             return null;
         }
@@ -173,6 +162,19 @@ public class BookingServiceImpl implements BookingService {
             throw new UnsupportedStatusException(strState);
         }
         return state;
+    }
+
+    private Pageable makePageable(String from, String size, Sort sort){
+        int intFrom = Integer.parseInt(from);
+        int intSize = Integer.parseInt(size);
+        if (intFrom < 0 || intSize < 0) {
+            throw new NotFoundResourceException("Не верно заданны ограничения");
+        }
+        int page = 0;
+        if(intFrom != 0){
+            page = intFrom / intSize;
+        }
+        return PageRequest.of(page, intSize, sort);
     }
 
 }

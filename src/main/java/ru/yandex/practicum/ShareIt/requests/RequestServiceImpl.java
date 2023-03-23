@@ -19,9 +19,9 @@ import java.util.List;
 
 @Service
 public class RequestServiceImpl implements RequestService {
-    UserService userService;
-    RequestRepository requestRepository;
-    RequestMapper requestMapper;
+    private final UserService userService;
+    private final RequestRepository requestRepository;
+    private final RequestMapper requestMapper;
 
     @Autowired
     public RequestServiceImpl(RequestRepository requestRepository, RequestMapper requestMapper,
@@ -32,6 +32,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public RequestDTO create(RequestDTO requestDTO, Long userId) {
+        requestDTO.setId(null);
         userService.getUserById(userId);
         Request request = requestMapper.makeRequestFromDTO(requestDTO, userId);
         request = requestRepository.save(request);
@@ -51,10 +52,6 @@ public class RequestServiceImpl implements RequestService {
         if (request == null) {
             throw new NoSuchBodyException(String.format("Запрос с id %s не найден", requestId));
         }
-        /*if(!request.getUser().getId().equals(userId)){
-            throw new NoSuchBodyException(String.format("Запрос с id %s не пренадлежит пользователю с id %s",
-                    requestId, userId));
-        }*/
         return requestMapper.makeOwnerDTOFromRequest(request);
     }
 
@@ -65,15 +62,24 @@ public class RequestServiceImpl implements RequestService {
             requestRepository.findAllExcept(user).forEach(request -> requestDTOs.add(requestMapper.makeOwnerDTOFromRequest(request)));
             return requestDTOs;
         }
+        Sort sortBy = Sort.by(Sort.Direction.DESC, "created");
+
+        Pageable page = makePageable(from,size,sortBy);
+        Page<Request> requestPage = requestRepository.findAllExcept(user,page);
+        requestPage.getContent().forEach(request -> requestDTOs.add(requestMapper.makeOwnerDTOFromRequest(request)));
+        return requestDTOs;
+    }
+
+    private Pageable makePageable(String from, String size, Sort sort){
         int intFrom = Integer.parseInt(from);
         int intSize = Integer.parseInt(size);
         if (intFrom < 0 || intSize < 0) {
             throw new NotFoundResourceException("Не верно заданны ограничения");
         }
-        Sort sortBy = Sort.by(Sort.Direction.DESC, "created");
-        Pageable page = PageRequest.of(intFrom, intSize, sortBy);
-        Page<Request> requestPage = requestRepository.findAllExcept(user,page);
-        requestPage.getContent().forEach(request -> requestDTOs.add(requestMapper.makeOwnerDTOFromRequest(request)));
-        return requestDTOs;
+        int page = 0;
+        if(intFrom != 0){
+            page = intFrom / intSize;
+        }
+        return PageRequest.of(page, intSize, sort);
     }
 }

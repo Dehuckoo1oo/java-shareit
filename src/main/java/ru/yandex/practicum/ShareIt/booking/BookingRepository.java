@@ -19,9 +19,6 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
 
     Page<Booking> findAllByBooker(User user, Pageable pageable);
 
-    @Query("SELECT e FROM Booking e WHERE e.booker <> :value")
-    Page<Booking> findAllExcept(User value, Pageable pageable);
-
     Page<Booking> findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(Long bookerId, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     Page<Booking> findAllByBooker_IdAndEndIsBefore(Long bookerId, LocalDateTime end, Pageable pageable);

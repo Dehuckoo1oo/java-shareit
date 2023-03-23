@@ -1,9 +1,13 @@
 package ru.yandex.practicum.ShareIt.item;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ShareIt.booking.Booking;
 import ru.yandex.practicum.ShareIt.booking.BookingRepository;
 import ru.yandex.practicum.ShareIt.booking.Status;
+import ru.yandex.practicum.ShareIt.exception.NotFoundResourceException;
 import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemMapper;
@@ -42,6 +46,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO create(ItemDTO itemDTO, Long userId) {
+        itemDTO.setId(null);
         Item item = itemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
         item = itemRepository.save(item);
         return itemMapper.makeItemDtoFromItem(item, userId);
@@ -134,5 +139,18 @@ public class ItemServiceImpl implements ItemService {
 
         Comment comment = commentMapper.mapDTOToEntity(commentDTO, userId, itemId);
         return commentMapper.mapEntityToDTO(commentRepository.save(comment));
+    }
+
+    private Pageable makePageable(String from, String size, Sort sort){
+        int intFrom = Integer.parseInt(from);
+        int intSize = Integer.parseInt(size);
+        if (intFrom < 0 || intSize < 0) {
+            throw new NotFoundResourceException("Не верно заданны ограничения");
+        }
+        int page = 0;
+        if(intFrom != 0){
+            page = intFrom / intSize;
+        }
+        return PageRequest.of(page, intSize, sort);
     }
 }

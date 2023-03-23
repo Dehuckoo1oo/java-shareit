@@ -1,9 +1,6 @@
 package ru.yandex.practicum.ShareIt.booking.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 
 import javax.validation.constraints.Future;
@@ -15,6 +12,8 @@ import java.time.LocalDateTime;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class BookingDTORequest {
     private Long id;
     @FutureOrPresent(groups = {Create.class})
@@ -24,5 +23,4 @@ public class BookingDTORequest {
     @NotNull(groups = {Create.class})
     private Long itemId;
     private Long bookerId;
-
 }
