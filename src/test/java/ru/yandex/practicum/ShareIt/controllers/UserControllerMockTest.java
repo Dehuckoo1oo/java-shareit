@@ -44,6 +44,7 @@ public class UserControllerMockTest {
         mvc = MockMvcBuilders
                 .standaloneSetup(userController)
                 .build();
+
         this.userDTO = new UserDTO(null,"Name", "mail@mail.ru");
         this.userDTOresult = new UserDTO(1L,"Name", "mail@mail.ru");
     }
@@ -72,7 +73,6 @@ public class UserControllerMockTest {
 
     @Test
     public void createUserTest() throws Exception {
-
         when(userService.create(any())).thenReturn(userDTOresult);
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userDTO))

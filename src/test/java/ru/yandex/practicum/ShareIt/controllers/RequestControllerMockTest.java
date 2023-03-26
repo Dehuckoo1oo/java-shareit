@@ -80,10 +80,24 @@ public class RequestControllerMockTest {
                 .andExpect(jsonPath("$.items.size()", is(ownedRequestDTO.getItems().size())));
     }
 
+    @Test
+    public void getRequestsByUserTest() throws Exception {
+        when(requestService.findRequestsByOwner(any())).thenReturn(List.of(ownedRequestDTO));
+
+        mvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(ownedRequestDTO.getId()), Long.class))
+                .andExpect(jsonPath("$[0].description", is(ownedRequestDTO.getDescription())))
+                .andExpect(jsonPath("$[0].created", is(notNullValue())))
+                .andExpect(jsonPath("$[0].items.size()", is(ownedRequestDTO.getItems().size())));
+    }
 
     @Test
     public void getAllTest() throws Exception {
-
         mvc.perform(get("/requests/all")
                         .header("X-Sharer-User-Id", 1)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -106,6 +120,19 @@ public class RequestControllerMockTest {
                 .andExpect(jsonPath("$.id", is(requestDTO.getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(requestDTO.getDescription())))
                 .andExpect(jsonPath("$.created", is(notNullValue())));
+    }
+
+    @Test
+    public void errorValidationCreateRequestTest() throws Exception {
+        requestDTO.setDescription(null);
+
+        mvc.perform(post("/requests")
+                        .content(mapper.writeValueAsString(requestDTO))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }

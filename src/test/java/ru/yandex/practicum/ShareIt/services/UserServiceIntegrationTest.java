@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
 import ru.yandex.practicum.ShareIt.user.UserService;
 
@@ -42,6 +43,7 @@ public class UserServiceIntegrationTest {
         Long id = users.get(0).getId();
         UserDTO userDTOUpdate = makeUserDTO("UpdateUser");
         userDTOUpdate.setId(id);
+        userDTOTest.setEmail(userDTOUpdate.getEmail());
         userService.update(userDTOUpdate);
         UserDTO userDTOResult = userService.findUserById(id);
         assertThat(userDTOResult.getName(), equalTo(userDTOUpdate.getName()));
@@ -56,6 +58,14 @@ public class UserServiceIntegrationTest {
         assertThat("exist 3 users", users.size() == 3);
     }
 
+    @Test
+    public void removeTest() {
+        userService.create(makeUserDTO("TestUser"));
+        List<UserDTO> cntUsersFirst = userService.findAll();
+        userService.remove(cntUsersFirst.get(0).getId());
+        List<UserDTO> cntUsersSecond = userService.findAll();
+        assertThat("exist 0 users", cntUsersSecond.size() == 0);
+    }
 
     private UserDTO makeUserDTO(String name) {
         return new UserDTO(1L, name, name + "@icloud.com");

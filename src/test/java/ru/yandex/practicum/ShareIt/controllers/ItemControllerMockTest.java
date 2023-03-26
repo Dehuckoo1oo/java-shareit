@@ -16,6 +16,7 @@ import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.Item;
 import ru.yandex.practicum.ShareIt.item.ItemController;
 import ru.yandex.practicum.ShareIt.item.ItemService;
+import ru.yandex.practicum.ShareIt.item.LastOrNextBooking;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.user.User;
@@ -61,6 +62,12 @@ public class ItemControllerMockTest {
 
         User user = new User(1L, "test", "test@icloud.com");
 
+        LastOrNextBooking lastOrNextBooking = LastOrNextBooking.builder()
+                .bookerId(user.getId())
+                .id(1L)
+                .build();
+
+
         comment = CommentDTO.builder().id(1L).text("text")
                 .itemId(1L).authorName("test").build();
 
@@ -68,7 +75,11 @@ public class ItemControllerMockTest {
                 .description("something")
                 .name("testItemName")
                 .available(true)
-                .id(1L).build();
+                .id(1L)
+                .lastBooking(lastOrNextBooking)
+                .build();
+
+        user.getItems().add(item);
     }
 
     @Test
@@ -88,7 +99,7 @@ public class ItemControllerMockTest {
     }
 
     @Test
-    public void getItemByIdTest() throws Exception {
+    public void findItemByIdTest() throws Exception {
         when(itemService.findItemById(any(), any())).thenReturn(itemDTO);
         mvc.perform(get("/items/1")
                         .header("X-Sharer-User-Id", 1)

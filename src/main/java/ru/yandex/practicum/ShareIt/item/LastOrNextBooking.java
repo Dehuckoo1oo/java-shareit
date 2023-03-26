@@ -1,14 +1,13 @@
 package ru.yandex.practicum.ShareIt.item;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LastOrNextBooking {
-    Long id;
-    Long bookerId;
-
+    private Long id;
+    private Long bookerId;
 }
