@@ -38,10 +38,13 @@ public class UserServiceIntegrationTest {
     @Test
     public void updateTest() {
         UserDTO userDTOTest = userService.create(makeUserDTO("TestUser"));
-        UserDTO userDTOUpdate = userService.update(makeUserDTO("UpdateUser"));
-        Long id = userDTOTest.getId();
-        userDTOTest = userService.findUserById(id);
-        assertThat(userDTOTest.getName(), equalTo(userDTOUpdate.getName()));
+        List<UserDTO> users = userService.findAll();
+        Long id = users.get(0).getId();
+        UserDTO userDTOUpdate = makeUserDTO("UpdateUser");
+        userDTOUpdate.setId(id);
+        userService.update(userDTOUpdate);
+        UserDTO userDTOResult = userService.findUserById(id);
+        assertThat(userDTOResult.getName(), equalTo(userDTOUpdate.getName()));
     }
 
     @Test
