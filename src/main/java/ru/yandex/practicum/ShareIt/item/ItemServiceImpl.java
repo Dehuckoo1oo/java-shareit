@@ -52,17 +52,6 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.makeItemDtoFromItem(item, userId);
     }
 
-    @Override
-    public ItemDTO remove(ItemDTO itemDTO, Long userId) {
-        Item existItem = getItemById(itemDTO.getId());
-        if (existItem.getOwner().getId().equals(userId)) {
-            itemRepository.delete(existItem);
-            return itemMapper.makeItemDtoFromItem(existItem, userId);
-        } else {
-            throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
-                    existItem.getId(), userId));
-        }
-    }
 
     @Override
     public ItemDTO update(ItemDTO itemDTO, Long userId, Long itemId) {
@@ -139,18 +128,5 @@ public class ItemServiceImpl implements ItemService {
 
         Comment comment = commentMapper.mapDTOToEntity(commentDTO, userId, itemId);
         return commentMapper.mapEntityToDTO(commentRepository.save(comment));
-    }
-
-    private Pageable makePageable(String from, String size, Sort sort) {
-        int intFrom = Integer.parseInt(from);
-        int intSize = Integer.parseInt(size);
-        if (intFrom < 0 || intSize < 0) {
-            throw new NotFoundResourceException("Не верно заданны ограничения");
-        }
-        int page = 0;
-        if (intFrom != 0) {
-            page = intFrom / intSize;
-        }
-        return PageRequest.of(page, intSize, sort);
     }
 }

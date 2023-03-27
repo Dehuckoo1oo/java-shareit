@@ -35,11 +35,6 @@ public class RequestMapper {
         return new RequestDTO(request.getId(), request.getCreated(), request.getDescription());
     }
 
-    public List<RequestDTO> makeDTOsFromRequests(List<Request> requests) {
-        List<RequestDTO> requestDTOs = new ArrayList<>();
-        requests.forEach(request -> requestDTOs.add(makeDTOFromRequest(request)));
-        return requestDTOs;
-    }
 
     public Request makeRequestFromDTO(RequestDTO requestDTO, Long userId) {
         User user = userRepository.findById(userId).orElse(null);

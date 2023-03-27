@@ -39,6 +39,7 @@ public class RequestControllerMockTest {
     @InjectMocks
     private RequestController requestController;
     private final ObjectMapper mapper = new ObjectMapper();
+
     private MockMvc mvc;
     private RequestDTO requestDTO;
     private OwnedRequestDTO ownedRequestDTO;

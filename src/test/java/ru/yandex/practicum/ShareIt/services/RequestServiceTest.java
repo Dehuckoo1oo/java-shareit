@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.ShareIt.requests.DTO.OwnedRequestDTO;
 import ru.yandex.practicum.ShareIt.requests.DTO.RequestDTO;
+import ru.yandex.practicum.ShareIt.requests.DTO.RequestMapper;
+import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.requests.RequestService;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
 import ru.yandex.practicum.ShareIt.user.UserService;
@@ -24,6 +26,8 @@ public class RequestServiceTest {
     private RequestService requestService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private RequestMapper requestMapper;
 
     @BeforeEach
     void truncateTables() {
@@ -45,9 +49,12 @@ public class RequestServiceTest {
     public void findAllTest() {
         UserDTO requester = userService.create(makeUserDTO("Mike"));
         UserDTO secondRequester = userService.create(makeUserDTO("Carl"));
-        RequestDTO requestDTO = requestService.create(makeRequestDTO(), requester.getId());
+        Request request = requestMapper.makeRequestFromDTO(requestService.create(makeRequestDTO(), requester.getId()),
+                requester.getId());
+        request.setCreated(LocalDateTime.now());
         List<OwnedRequestDTO> ownedRequestDTOs = requestService.findAll("0", "15", secondRequester.getId());
         assertThat("Не найден запрос вещи", ownedRequestDTOs.size() == 1);
+        assertThat("Маппер не работает", request.getDescription().equals("I need some Item"));
     }
 
     @Test
