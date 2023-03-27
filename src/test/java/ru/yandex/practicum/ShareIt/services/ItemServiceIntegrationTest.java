@@ -11,7 +11,10 @@ import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTOResponse;
 import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
+import ru.yandex.practicum.ShareIt.item.DTO.ItemForRequestDTO;
+import ru.yandex.practicum.ShareIt.item.Item;
 import ru.yandex.practicum.ShareIt.item.ItemService;
+import ru.yandex.practicum.ShareIt.item.comments.Comment;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
 import ru.yandex.practicum.ShareIt.user.UserService;
@@ -46,6 +49,8 @@ public class ItemServiceIntegrationTest {
 
     @Test
     public void createTest() {
+        ItemForRequestDTO item = makeItem("someItem");
+        item.setAvailable(false);
         UserDTO user = userService.create(makeUserDTO("TestUser"));
         ItemDTO itemDTOTest = itemService.create(makeItemDTO("TestItem"), user.getId());
         ItemDTO itemDTO = itemService.findItemById(user.getId(), itemDTOTest.getId());
@@ -89,7 +94,7 @@ public class ItemServiceIntegrationTest {
     public void findItemByIdNotExistTest() {
         UserDTO owner = userService.create(makeUserDTO("owner"));
         try {
-            itemService.findItemById(owner.getId(),999L);
+            itemService.findItemById(owner.getId(), 999L);
             fail("Expected NoSuchBodyException");
         } catch (NoSuchBodyException e) {
             assertEquals(e.getParameter(), String.format("Предмет с id %s отсутствует", 999L));
@@ -121,6 +126,10 @@ public class ItemServiceIntegrationTest {
                 null, null, null);
     }
 
+    private ItemForRequestDTO makeItem(String name) {
+        return new ItemForRequestDTO(1L, "name", "just " + name,true,1L);
+    }
+
     private BookingDTORequest makeNewBooking(UserDTO userDTO, ItemDTO itemDTO) {
         return new BookingDTORequest(null,
                 LocalDateTime.now().minusDays(1L),
@@ -130,6 +139,9 @@ public class ItemServiceIntegrationTest {
     }
 
     private CommentDTO makeCommentDTO(UserDTO booker) {
+        Comment commentEnt = new Comment();
+        commentEnt.setItem(new Item());
+        commentEnt.setText("");
         return new CommentDTO(null, "Nice item", 1L, booker.getName());
     }
 }

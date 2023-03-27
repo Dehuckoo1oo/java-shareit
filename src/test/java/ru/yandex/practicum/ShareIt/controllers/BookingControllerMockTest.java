@@ -28,8 +28,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -149,5 +148,21 @@ public class BookingControllerMockTest {
                 .andExpect(jsonPath("$[0].end", is(notNullValue())))
                 .andExpect(jsonPath("$[0].status", is(bookingDTOResponse.getStatus().toString())));
     }
+    @Test
+    public void updateStatusBookingTest() throws Exception {
+        when(bookingService.updateStatus(any(), any(),any())).thenReturn(bookingDTOResponse);
+        mvc.perform(patch("/bookings/1")
+                        .param("approved","true")
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(bookingDTOResponse.getId()), Long.class))
+                .andExpect(jsonPath("$.start", is(notNullValue())))
+                .andExpect(jsonPath("$.end", is(notNullValue())))
+                .andExpect(jsonPath("$.booker", is(notNullValue())));
+    }
+
 }
 

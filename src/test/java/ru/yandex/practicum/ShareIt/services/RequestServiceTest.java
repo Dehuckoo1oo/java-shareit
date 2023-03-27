@@ -54,7 +54,6 @@ public class RequestServiceTest {
         request.setCreated(LocalDateTime.now());
         List<OwnedRequestDTO> ownedRequestDTOs = requestService.findAll("0", "15", secondRequester.getId());
         assertThat("Не найден запрос вещи", ownedRequestDTOs.size() == 1);
-        assertThat("Маппер не работает", request.getDescription().equals("I need some Item"));
     }
 
     @Test

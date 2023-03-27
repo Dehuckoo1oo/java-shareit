@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-@NoArgsConstructor
 public class BookedItem {
     private Long id;
     private String name;

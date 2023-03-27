@@ -102,6 +102,18 @@ public class ItemControllerMockTest {
     }
 
     @Test
+    public void createTest() throws Exception {
+        when(itemService.create(any(), any())).thenReturn(itemDTO);
+        mvc.perform(post("/items")
+                        .content(mapper.writeValueAsString(itemDTO))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void findItemByIdTest() throws Exception {
         when(itemService.findItemById(any(), any())).thenReturn(itemDTO);
         mvc.perform(get("/items/1")
@@ -159,7 +171,7 @@ public class ItemControllerMockTest {
     }
 
     @Test
-    public void deleteItemControllerAdviceTest() throws Exception {
+    public void updateItemControllerAdviceTest() throws Exception {
         doThrow(new NoSuchBodyException("")).when(itemService).update(any(),any(),any());
         mvc.perform(patch("/items/1")
                         .content(mapper.writeValueAsString(itemDTO))
@@ -169,6 +181,4 @@ public class ItemControllerMockTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
-
 }
