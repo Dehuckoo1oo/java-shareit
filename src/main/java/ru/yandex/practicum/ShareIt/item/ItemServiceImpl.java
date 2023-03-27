@@ -1,13 +1,9 @@
 package ru.yandex.practicum.ShareIt.item;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ShareIt.booking.Booking;
 import ru.yandex.practicum.ShareIt.booking.BookingRepository;
 import ru.yandex.practicum.ShareIt.booking.Status;
-import ru.yandex.practicum.ShareIt.exception.NotFoundResourceException;
 import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemMapper;
