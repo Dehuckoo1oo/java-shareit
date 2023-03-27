@@ -148,6 +148,7 @@ public class BookingControllerMockTest {
                 .andExpect(jsonPath("$[0].end", is(notNullValue())))
                 .andExpect(jsonPath("$[0].status", is(bookingDTOResponse.getStatus().toString())));
     }
+
     @Test
     public void updateStatusBookingTest() throws Exception {
         when(bookingService.updateStatus(any(), any(),any())).thenReturn(bookingDTOResponse);
@@ -163,6 +164,5 @@ public class BookingControllerMockTest {
                 .andExpect(jsonPath("$.end", is(notNullValue())))
                 .andExpect(jsonPath("$.booker", is(notNullValue())));
     }
-
 }
 
