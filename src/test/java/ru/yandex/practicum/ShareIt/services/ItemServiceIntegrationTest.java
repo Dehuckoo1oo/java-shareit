@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.ShareIt.booking.BookingService;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTOResponse;
+import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
+import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.ItemService;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
@@ -19,6 +21,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 public class ItemServiceIntegrationTest {
@@ -81,6 +85,32 @@ public class ItemServiceIntegrationTest {
         assertThat(commentDTO, equalTo(itemWithComment.getComments().get(0)));
     }
 
+    @Test
+    public void findItemByIdNotExistTest() {
+        UserDTO owner = userService.create(makeUserDTO("owner"));
+        try {
+            itemService.findItemById(owner.getId(),999L);
+            fail("Expected NoSuchBodyException");
+        } catch (NoSuchBodyException e) {
+            assertEquals(e.getParameter(), String.format("Предмет с id %s отсутствует", 999L));
+        }
+    }
+
+    @Test
+    public void createCommentFailByOwnedItemTest() {
+        UserDTO owner = userService.create(makeUserDTO("owner"));
+        ItemDTO itemDTO = itemService.create(makeItemDTO("TestItem1"), owner.getId());
+        UserDTO booker = userService.create(makeUserDTO("booker"));
+        UserDTO anotherUser = userService.create(makeUserDTO("anotherUser"));
+        BookingDTOResponse bookingDTOResponse = bookingService.create(makeNewBooking(booker, itemDTO), booker.getId());
+        bookingService.updateStatus(owner.getId(), bookingDTOResponse.getId(), true);
+        try {
+            itemService.createComment(makeCommentDTO(anotherUser), anotherUser.getId(), itemDTO.getId());
+            fail("Expected UnsupportedStatusException");
+        } catch (UnsupportedStatusException e) {
+            assertEquals(e.getParameter(), String.format("Данный пользователь не брал в аренду предмет с id %s", itemDTO.getId()));
+        }
+    }
 
     private UserDTO makeUserDTO(String name) {
         return new UserDTO(1L, name, name + "@icloud.com");

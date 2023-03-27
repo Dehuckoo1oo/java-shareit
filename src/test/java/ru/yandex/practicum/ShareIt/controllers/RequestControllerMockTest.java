@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.yandex.practicum.ShareIt.exception.ErrorHandler;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemForRequestDTO;
 import ru.yandex.practicum.ShareIt.requests.DTO.OwnedRequestDTO;
 import ru.yandex.practicum.ShareIt.requests.DTO.RequestDTO;
@@ -46,6 +47,7 @@ public class RequestControllerMockTest {
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(requestController)
+                .setControllerAdvice(new ErrorHandler())
                 .build();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

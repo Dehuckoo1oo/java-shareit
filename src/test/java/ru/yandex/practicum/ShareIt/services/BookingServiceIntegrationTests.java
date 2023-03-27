@@ -9,6 +9,7 @@ import ru.yandex.practicum.ShareIt.booking.BookingService;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTOResponse;
 import ru.yandex.practicum.ShareIt.booking.Status;
+import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.ItemService;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
@@ -19,6 +20,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SpringBootTest
@@ -212,6 +215,18 @@ public class BookingServiceIntegrationTests {
         List<BookingDTOResponse> bookingDTOResponses = bookingService
                 .getBookingByOwnerItems("0", "15", owner.getId(), "REJECTED");
         assertThat("Некорректно работают критерии отбора", bookingDTOResponses.size() == 1);
+    }
+
+    @Test
+    public void createFailBookOwnItemTest() {
+        UserDTO owner = userService.create(makeUserDTO("owner"));
+        ItemDTO itemDTO = itemService.create(makeItemDTO("TestItem1"), owner.getId());
+        try {
+            bookingService.create(makeNewBooking(owner, itemDTO), owner.getId());
+            fail("Expected NoSuchBodyException");
+        } catch (NoSuchBodyException e) {
+            assertEquals(e.getParameter(), "Нельзя бронировать свой предмет");
+        }
     }
 
     private UserDTO makeUserDTO(String name) {

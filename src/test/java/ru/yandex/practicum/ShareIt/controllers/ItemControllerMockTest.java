@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.yandex.practicum.ShareIt.exception.ErrorHandler;
+import ru.yandex.practicum.ShareIt.exception.UnsupportedStatusException;
 import ru.yandex.practicum.ShareIt.item.DTO.ItemDTO;
 import ru.yandex.practicum.ShareIt.item.Item;
 import ru.yandex.practicum.ShareIt.item.ItemController;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -49,6 +52,7 @@ public class ItemControllerMockTest {
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(itemController)
+                .setControllerAdvice(new ErrorHandler())
                 .build();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -66,7 +70,6 @@ public class ItemControllerMockTest {
                 .bookerId(user.getId())
                 .id(1L)
                 .build();
-
 
         comment = CommentDTO.builder().id(1L).text("text")
                 .itemId(1L).authorName("test").build();
@@ -140,5 +143,18 @@ public class ItemControllerMockTest {
                 .andExpect(jsonPath("$[0].name", is(itemDTO.getName())))
                 .andExpect(jsonPath("$[0].description", is(itemDTO.getDescription())))
                 .andExpect(jsonPath("$[0].available", is(itemDTO.getAvailable())));
+    }
+
+    @Test
+    public void createCommentControllerAdviceTest() throws Exception {
+        doThrow(new UnsupportedStatusException("Дата старта бронирования позже даты окончания"))
+                .when(itemService).createComment(any(),any(),any());
+        mvc.perform(post("/items/1/comment")
+                        .content(mapper.writeValueAsString(comment))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

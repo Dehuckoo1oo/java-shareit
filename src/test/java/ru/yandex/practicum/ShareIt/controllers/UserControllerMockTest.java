@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.yandex.practicum.ShareIt.exception.ErrorHandler;
 import ru.yandex.practicum.ShareIt.user.UserController;
 import ru.yandex.practicum.ShareIt.user.UserDTO;
 import ru.yandex.practicum.ShareIt.user.UserService;
@@ -43,6 +44,7 @@ public class UserControllerMockTest {
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(userController)
+                .setControllerAdvice(new ErrorHandler())
                 .build();
 
         this.userDTO = new UserDTO(null,"Name", "mail@mail.ru");
@@ -134,4 +136,16 @@ public class UserControllerMockTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void createUserFailNameTest() throws Exception {
+        userDTO.setName(null);
+        mvc.perform(post("/users")
+                        .content(mapper.writeValueAsString(userDTO))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

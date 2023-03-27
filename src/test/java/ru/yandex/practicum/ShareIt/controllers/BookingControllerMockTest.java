@@ -11,12 +11,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.ShareIt.booking.*;
 import ru.yandex.practicum.ShareIt.booking.DTO.Booker;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTOResponse;
 import ru.yandex.practicum.ShareIt.exception.ErrorHandler;
+import ru.yandex.practicum.ShareIt.exception.NotFoundResourceException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,6 +67,21 @@ public class BookingControllerMockTest {
                 .booker(new Booker(1L))
                 .status(Status.APPROVED)
                 .build();
+    }
+
+    @Test
+    public void testHandleValidationException() throws Exception {
+        doThrow(new NotFoundResourceException("Дата старта бронирования позже даты окончания"))
+                .when(bookingService).create(any(),any());
+        bookingDTORequest.setStart(LocalDateTime.now().plusDays(1));
+        bookingDTORequest.setEnd(LocalDateTime.now().plusHours(22));
+        mvc.perform(post("/bookings")
+                        .content(mapper.writeValueAsString(bookingDTORequest))
+                        .header("X-Sharer-User-Id", 1)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test

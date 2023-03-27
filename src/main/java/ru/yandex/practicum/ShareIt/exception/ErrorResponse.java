@@ -1,6 +1,6 @@
 package ru.yandex.practicum.ShareIt.exception;
 
-class ErrorResponse {
+public class ErrorResponse {
 
     private final String error;
 
