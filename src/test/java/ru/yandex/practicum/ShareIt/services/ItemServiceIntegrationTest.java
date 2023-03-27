@@ -117,6 +117,14 @@ public class ItemServiceIntegrationTest {
         }
     }
 
+    @Test
+    public void getItemByUserIdTest() {
+        UserDTO owner = userService.create(makeUserDTO("owner"));
+        ItemDTO itemDTO = itemService.create(makeItemDTO("TestItem1"), owner.getId());
+        List<ItemDTO> items = itemService.getItemByUserId(owner.getId());
+        assertEquals(1, items.size());
+    }
+
     private UserDTO makeUserDTO(String name) {
         return new UserDTO(1L, name, name + "@icloud.com");
     }
@@ -127,7 +135,7 @@ public class ItemServiceIntegrationTest {
     }
 
     private ItemForRequestDTO makeItem(String name) {
-        return new ItemForRequestDTO(1L, "name", "just " + name,true,1L);
+        return new ItemForRequestDTO(1L, "name", "just " + name, true, 1L);
     }
 
     private BookingDTORequest makeNewBooking(UserDTO userDTO, ItemDTO itemDTO) {

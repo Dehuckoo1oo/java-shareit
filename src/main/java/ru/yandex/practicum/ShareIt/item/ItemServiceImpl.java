@@ -12,6 +12,7 @@ import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserService;
 import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -70,6 +71,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.makeItemDtoFromItem(itemRepository.save(existItem), userId);
     }
 
+    @Transactional
     @Override
     public List<ItemDTO> getItemByUserId(Long ownerId) {
         User owner = userService.getUserById(ownerId);
