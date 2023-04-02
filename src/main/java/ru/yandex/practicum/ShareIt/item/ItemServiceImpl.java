@@ -53,7 +53,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO update(ItemDTO itemDTO, Long userId, Long itemId) {
 
-        //itemDTO.setId(itemId);
         Item existItem = getItemById(itemId);
         if (!existItem.getOwner().getId().equals(userId)) {
             throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
@@ -124,6 +123,7 @@ public class ItemServiceImpl implements ItemService {
                             String.format("Данный пользователь не брал в аренду предмет с id %s", itemId));
                 });
 
+        commentDTO.setCreated(LocalDateTime.now());
         Comment comment = commentMapper.mapDTOToEntity(commentDTO, userId, itemId);
         return commentMapper.mapEntityToDTO(commentRepository.save(comment));
     }

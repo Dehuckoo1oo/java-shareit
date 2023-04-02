@@ -48,7 +48,7 @@ public class ItemMapper {
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                 .filter(booking -> booking.getStatus().equals(Status.APPROVED))
                 .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
-                .max(Comparator.comparing(Booking::getEnd))
+                .min(Comparator.comparing(Booking::getEnd))
                 .orElse(null);
         List<CommentDTO> comments = new ArrayList<>();
         commentRepository.findAllByItem_id(item.getId())

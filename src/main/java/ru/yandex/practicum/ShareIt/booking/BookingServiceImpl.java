@@ -44,8 +44,9 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundResourceException(String.format("Предмест с id %s не доступен для бронирования",
                     item.getId()));
         }
-        if (bookingDTORequest.getEnd().isBefore(bookingDTORequest.getStart())) {
-            throw new NotFoundResourceException("Дата старта бронирования позже даты окончания");
+        if (bookingDTORequest.getEnd().isBefore(bookingDTORequest.getStart()) ||
+                bookingDTORequest.getEnd().equals(bookingDTORequest.getStart())) {
+            throw new NotFoundResourceException("Дата старта бронирования должна быть раньше даты окончания");
         }
         Booking booking = new Booking(null, bookingDTORequest.getStart(), bookingDTORequest.getEnd(), item, booker,
                 Status.WAITING);

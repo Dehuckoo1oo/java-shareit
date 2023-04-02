@@ -16,9 +16,11 @@ import java.time.LocalDateTime;
 @Builder
 public class BookingDTORequest {
     private Long id;
+    @NotNull(groups = {Create.class})
     @FutureOrPresent(groups = {Create.class})
     private LocalDateTime start;
-    @Future(groups = {Create.class})
+    @NotNull(groups = {Create.class})
+    @FutureOrPresent(groups = {Create.class})
     private LocalDateTime end;
     @NotNull(groups = {Create.class})
     private Long itemId;

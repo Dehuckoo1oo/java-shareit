@@ -21,11 +21,11 @@ public class CommentMapper {
     public Comment mapDTOToEntity(CommentDTO commentDTO, Long userId, Long itemId) {
         User user = userRepository.findById(userId).orElse(null);
         Item item = itemRepository.findById(itemId).orElse(null);
-        return new Comment(commentDTO.getId(), commentDTO.getText(), item, user);
+        return new Comment(commentDTO.getId(), commentDTO.getText(),commentDTO.getCreated(), item, user);
     }
 
     public CommentDTO mapEntityToDTO(Comment comment) {
-        return new CommentDTO(comment.getId(), comment.getText(), comment.getItem().getId(),
+        return new CommentDTO(comment.getId(), comment.getText(),comment.getCreated(), comment.getItem().getId(),
                 comment.getAuthor().getName());
     }
 

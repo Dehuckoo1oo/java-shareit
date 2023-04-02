@@ -44,6 +44,7 @@ CREATE TABLE comments
 (
     id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     text      varchar(255),
+    created   TIMESTAMP WITHOUT TIME ZONE,
     item_id   bigint,
     author_id bigint
 );
