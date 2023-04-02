@@ -150,6 +150,6 @@ public class ItemServiceIntegrationTest {
         Comment commentEnt = new Comment();
         commentEnt.setItem(new Item());
         commentEnt.setText("");
-        return new CommentDTO(null, "Nice item", 1L, booker.getName());
+        return new CommentDTO(null, "Nice item",LocalDateTime.now(), 1L, booker.getName());
     }
 }

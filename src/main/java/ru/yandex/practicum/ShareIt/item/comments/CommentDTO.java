@@ -4,7 +4,6 @@ import lombok.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
 
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
