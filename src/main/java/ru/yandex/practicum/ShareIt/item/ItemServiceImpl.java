@@ -12,6 +12,7 @@ import ru.yandex.practicum.ShareIt.user.User;
 import ru.yandex.practicum.ShareIt.user.UserService;
 import ru.yandex.practicum.ShareIt.exception.NoSuchBodyException;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,26 +43,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDTO create(ItemDTO itemDTO, Long userId) {
-        Item item = ItemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
-        return itemMapper.makeItemDtoFromItem(itemRepository.save(item), userId);
+        itemDTO.setId(null);
+        Item item = itemMapper.makeItemFromItemDTO(itemDTO, userService.getUserById(userId));
+        item = itemRepository.save(item);
+        return itemMapper.makeItemDtoFromItem(item, userId);
     }
 
-    @Override
-    public ItemDTO remove(ItemDTO itemDTO, Long userId) {
-        Item existItem = getItemById(itemDTO.getId());
-        if (existItem.getOwner().getId().equals(userId)) {
-            itemRepository.delete(existItem);
-            return itemMapper.makeItemDtoFromItem(existItem, userId);
-        } else {
-            throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
-                    existItem.getId(), userId));
-        }
-    }
 
     @Override
     public ItemDTO update(ItemDTO itemDTO, Long userId, Long itemId) {
 
-        //itemDTO.setId(itemId);
         Item existItem = getItemById(itemId);
         if (!existItem.getOwner().getId().equals(userId)) {
             throw new NoSuchBodyException(String.format("Предмет с id %s не пренадлежит пользователю с id %s",
@@ -79,6 +70,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.makeItemDtoFromItem(itemRepository.save(existItem), userId);
     }
 
+    @Transactional
     @Override
     public List<ItemDTO> getItemByUserId(Long ownerId) {
         User owner = userService.getUserById(ownerId);
@@ -131,6 +123,7 @@ public class ItemServiceImpl implements ItemService {
                             String.format("Данный пользователь не брал в аренду предмет с id %s", itemId));
                 });
 
+        commentDTO.setCreated(LocalDateTime.now());
         Comment comment = commentMapper.mapDTOToEntity(commentDTO, userId, itemId);
         return commentMapper.mapEntityToDTO(commentRepository.save(comment));
     }

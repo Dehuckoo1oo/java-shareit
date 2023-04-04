@@ -1,4 +1,4 @@
-package ru.yandex.practicum.ShareIt.item.comments;
+package ru.yandex.practicum.ShareIt.requests.DTO;
 
 import lombok.*;
 import ru.yandex.practicum.ShareIt.groups.Create;
@@ -12,11 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommentDTO {
+@ToString
+public class RequestDTO {
     private Long id;
-    @NotBlank(groups = {Create.class})
-    private String text;
     private LocalDateTime created;
-    private Long itemId;
-    private String authorName;
+    @NotBlank(groups = {Create.class})
+    private String description;
 }

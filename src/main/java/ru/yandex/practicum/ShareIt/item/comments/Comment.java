@@ -5,6 +5,7 @@ import ru.yandex.practicum.ShareIt.item.Item;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
+    private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;

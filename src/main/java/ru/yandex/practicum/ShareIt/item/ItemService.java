@@ -9,8 +9,6 @@ public interface ItemService {
 
     public ItemDTO create(ItemDTO itemDTO, Long userId);
 
-    public ItemDTO remove(ItemDTO itemDTO, Long owner);
-
     public ItemDTO update(ItemDTO itemDTO, Long userId, Long itemId);
 
     public List<ItemDTO> getItemByUserId(Long ownerId);

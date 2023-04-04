@@ -24,12 +24,6 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidBody(final ValidationException e) {
-        return new ErrorResponse(String.format("Ошибка валидации: %s", e.getParameter()));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNotFoundResource(final NotFoundResourceException e) {
         return new ErrorResponse(String.format("Ошибка валидации: %s", e.getParameter()));
     }
@@ -38,12 +32,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundBody(final NoSuchBodyException e) {
         return new ErrorResponse(String.format("Запрашиваемый %s или не найден", e.getParameter()));
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleInvalidBody(final ConflictException e) {
-        return new ErrorResponse(String.format("Возник конфликт данных: %s", e.getParameter()));
     }
 }
 

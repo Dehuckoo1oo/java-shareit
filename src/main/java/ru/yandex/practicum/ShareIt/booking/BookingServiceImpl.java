@@ -1,6 +1,9 @@
 package ru.yandex.practicum.ShareIt.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ShareIt.booking.DTO.BookingDTORequest;
@@ -19,9 +22,9 @@ import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
-    BookingRepository bookingRepository;
-    UserService userService;
-    ItemService itemService;
+    private final BookingRepository bookingRepository;
+    private final UserService userService;
+    private final ItemService itemService;
 
     @Autowired
     public BookingServiceImpl(BookingRepository bookingRepository, UserService userService, ItemService itemService) {
@@ -41,8 +44,9 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundResourceException(String.format("Предмест с id %s не доступен для бронирования",
                     item.getId()));
         }
-        if (bookingDTORequest.getEnd().isBefore(bookingDTORequest.getStart())) {
-            throw new NotFoundResourceException("Дата старта бронирования позже даты окончания");
+        if (bookingDTORequest.getEnd().isBefore(bookingDTORequest.getStart()) ||
+                bookingDTORequest.getEnd().equals(bookingDTORequest.getStart())) {
+            throw new NotFoundResourceException("Дата старта бронирования должна быть раньше даты окончания");
         }
         Booking booking = new Booking(null, bookingDTORequest.getStart(), bookingDTORequest.getEnd(), item, booker,
                 Status.WAITING);
@@ -87,56 +91,62 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByCurrentUser(Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByCurrentUser(String from, String size, Long userId, String strState) {
         State state = checkStatus(strState);
-
-        userService.getUserById(userId);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
+        Pageable pageable = makePageable(from, size, sortBy);
+        User user = userService.getUserById(userId);
         if (state.equals(State.ALL)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_Id(userId, sortBy));
+            Page<Booking> pageList = bookingRepository.findAllByBooker(user, pageable);
+            return BookingMapper.mapEntityToDTOList(pageList.getContent());
         } else if (state.equals(State.CURRENT)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStartIsBeforeAndEndIsAfter(userId,
+                            LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.PAST)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndEndIsBefore(userId,
+                            LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.FUTURE)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStartIsAfter(userId,
+                            LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.WAITING)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.WAITING, sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStatus(userId,
+                            Status.WAITING, pageable).getContent());
         } else if (state.equals(State.REJECTED)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByBooker_IdAndStatus(userId,
-                    Status.REJECTED, sortBy));
+            return BookingMapper.mapEntityToDTOList(
+                    bookingRepository.findAllByBooker_IdAndStatus(userId,
+                            Status.REJECTED, pageable).getContent());
         } else {
             return null;
         }
     }
 
     @Override
-    public List<BookingDTOResponse> getBookingByOwnerItems(Long userId, String strState) {
+    public List<BookingDTOResponse> getBookingByOwnerItems(String from, String size, Long userId, String strState) {
         State state = checkStatus(strState);
         userService.getUserById(userId);
         Sort sortBy = Sort.by(Sort.Direction.DESC, "start");
-
+        Pageable pageable = makePageable(from, size, sortBy);
         if (state.equals(State.ALL)) {
-            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, sortBy));
+            return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_Id(userId, pageable).getContent());
         } else if (state.equals(State.CURRENT)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsBeforeAndEndIsAfter(userId,
-                    LocalDateTime.now(), LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.PAST)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndEndIsBefore(userId,
-                    LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.FUTURE)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStartIsAfter(userId,
-                    LocalDateTime.now(), sortBy));
+                    LocalDateTime.now(), pageable).getContent());
         } else if (state.equals(State.WAITING)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.WAITING, sortBy));
+                    Status.WAITING, pageable).getContent());
         } else if (state.equals(State.REJECTED)) {
             return BookingMapper.mapEntityToDTOList(bookingRepository.findAllByItem_Owner_IdAndStatus(userId,
-                    Status.REJECTED, sortBy));
+                    Status.REJECTED, pageable).getContent());
         } else {
             return null;
         }
@@ -150,6 +160,19 @@ public class BookingServiceImpl implements BookingService {
             throw new UnsupportedStatusException(strState);
         }
         return state;
+    }
+
+    private Pageable makePageable(String from, String size, Sort sort) {
+        int intFrom = Integer.parseInt(from);
+        int intSize = Integer.parseInt(size);
+        if (intFrom < 0 || intSize < 0) {
+            throw new NotFoundResourceException("Не верно заданны ограничения");
+        }
+        int page = 0;
+        if (intFrom != 0) {
+            page = intFrom / intSize;
+        }
+        return PageRequest.of(page, intSize, sort);
     }
 
 }

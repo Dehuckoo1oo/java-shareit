@@ -2,6 +2,15 @@ DROP TABLE IF EXISTS items cascade;
 DROP TABLE IF EXISTS users cascade;
 DROP TABLE IF EXISTS bookings cascade;
 DROP TABLE IF EXISTS comments cascade;
+DROP TABLE IF EXISTS requests cascade;
+
+CREATE TABLE requests
+(
+    id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    requester   bigint,
+    created     timestamp,
+    description varchar(255)
+);
 
 CREATE TABLE items
 (
@@ -9,7 +18,8 @@ CREATE TABLE items
     name        varchar(128),
     description varchar(255),
     owner       bigint,
-    available   boolean
+    available   boolean,
+    request_id   bigint
 );
 
 CREATE TABLE users
@@ -34,10 +44,15 @@ CREATE TABLE comments
 (
     id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     text      varchar(255),
+    created   TIMESTAMP WITHOUT TIME ZONE,
     item_id   bigint,
     author_id bigint
 );
 
+ALTER TABLE requests
+    ADD FOREIGN KEY (requester) REFERENCES users (id) ON DELETE CASCADE;
+ALTER TABLE items
+    ADD FOREIGN KEY (request_id) REFERENCES requests (id) ON DELETE CASCADE;
 ALTER TABLE items
     ADD FOREIGN KEY (owner) REFERENCES users (id) ON DELETE CASCADE;
 ALTER TABLE bookings

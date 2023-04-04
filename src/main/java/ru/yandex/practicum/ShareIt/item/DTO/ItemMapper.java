@@ -10,6 +10,8 @@ import ru.yandex.practicum.ShareIt.item.LastOrNextBooking;
 import ru.yandex.practicum.ShareIt.item.comments.CommentDTO;
 import ru.yandex.practicum.ShareIt.item.comments.CommentMapper;
 import ru.yandex.practicum.ShareIt.item.comments.CommentRepository;
+import ru.yandex.practicum.ShareIt.requests.RequestRepository;
+import ru.yandex.practicum.ShareIt.requests.Request;
 import ru.yandex.practicum.ShareIt.user.User;
 
 import java.time.LocalDateTime;
@@ -22,14 +24,16 @@ public class ItemMapper {
 
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
     private final CommentMapper commentMapper;
 
     @Autowired
     public ItemMapper(BookingRepository bookingRepository, CommentRepository commentRepository,
-                      CommentMapper commentMapper) {
+                      CommentMapper commentMapper, RequestRepository requestRepository) {
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
+        this.requestRepository = requestRepository;
     }
 
     public ItemDTO makeItemDtoFromItem(Item item, Long userId) {
@@ -44,18 +48,33 @@ public class ItemMapper {
                 .filter(booking -> booking.getStart().isAfter(LocalDateTime.now()))
                 .filter(booking -> booking.getStatus().equals(Status.APPROVED))
                 .filter(booking -> booking.getItem().getOwner().getId().equals(userId))
-                .max(Comparator.comparing(Booking::getEnd))
+                .min(Comparator.comparing(Booking::getEnd))
                 .orElse(null);
         List<CommentDTO> comments = new ArrayList<>();
         commentRepository.findAllByItem_id(item.getId())
                 .forEach(comment -> comments.add(commentMapper.mapEntityToDTO(comment)));
-
+        Request request = item.getRequest();
+        Long requestId = null;
+        if (request != null) {
+            requestId = request.getId();
+        }
         return new ItemDTO(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
-                mapToLastOrNextBooking(lastBooking), mapToLastOrNextBooking(nextBooking), comments);
+                mapToLastOrNextBooking(lastBooking), mapToLastOrNextBooking(nextBooking), comments, requestId);
     }
 
-    public static Item makeItemFromItemDTO(ItemDTO itemDTO, User owner) {
-        return new Item(itemDTO.getId(), itemDTO.getName(), itemDTO.getDescription(), owner, itemDTO.getAvailable());
+    public Item makeItemFromItemDTO(ItemDTO itemDTO, User owner) {
+        Long requestId = itemDTO.getRequestId();
+        Request request = null;
+        if (requestId != null) {
+            request = requestRepository.findById(itemDTO.getRequestId()).orElse(null);
+        }
+        return new Item(itemDTO.getId(), itemDTO.getName(), itemDTO.getDescription(), owner, itemDTO.getAvailable(),
+                request);
+    }
+
+    public ItemForRequestDTO makeItemForRequestDTO(Item item) {
+        return new ItemForRequestDTO(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
+                item.getRequest().getId());
     }
 
     public static LastOrNextBooking mapToLastOrNextBooking(Booking booking) {
