@@ -45,14 +45,14 @@ public class BookingController {
         return bookingClient.getBooking(userId, bookingId);
     }
 
-	@GetMapping("/owner")
-	public ResponseEntity<Object> getBookingByOwnerItems(@RequestHeader("X-Sharer-User-Id") long userId,
+    @GetMapping("/owner")
+    public ResponseEntity<Object> getBookingByOwnerItems(@RequestHeader("X-Sharer-User-Id") long userId,
                                                          @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                          @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-		return bookingClient.getBookingByOwnerItems(userId,stateParam,from, size);
-	}
+        return bookingClient.getBookingByOwnerItems(userId, stateParam, from, size);
+    }
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> approveBooking(@RequestHeader("X-Sharer-User-Id") Long userId,

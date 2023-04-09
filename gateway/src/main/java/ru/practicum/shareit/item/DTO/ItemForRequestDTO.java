@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.DTO;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -10,9 +10,6 @@ import ru.practicum.shareit.groups.Create;
 import ru.practicum.shareit.item.DTO.ItemDTO;
 import ru.practicum.shareit.item.comments.CommentDTO;
 
-import javax.validation.Valid;
-
-
 @Controller
 @RequestMapping("/items")
 @RequiredArgsConstructor
