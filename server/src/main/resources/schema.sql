@@ -12,6 +12,7 @@ CREATE TABLE requests
     description varchar(255)
 );
 
+
 CREATE TABLE items
 (
     id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
