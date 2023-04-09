@@ -155,7 +155,7 @@ public class BookingServiceImpl implements BookingService {
 
     private State checkStatus(String strState) {
         Optional<State> state = State.from(strState);
-        if(state.isPresent()){
+        if (state.isPresent()) {
             return state.get();
         } else {
             throw new UnsupportedStatusException(strState);
